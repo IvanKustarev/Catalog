@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Catalog</title>
+</head>
+<body>
+<h2>Каталог библиотеки:</h2>
+<div th:each="book : ${booksList}">
+    <form action="takebook" method="post">
+        <span th:text="${book.name}">Имя книги</span>
+        <input name="bookId" type="hidden" th:value="${book.id}">
+        <button type="submit">Взять книгу</button>
+    </form>
+</div>
+</body>
+</html>
