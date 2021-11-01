@@ -9,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/catalog")
@@ -35,6 +33,9 @@ public class CatalogController {
         }
         model.addAttribute("booksList", booksList);
         Users user = usersRepository.findById(userId).get();
+
+        addModelAttributes(model, userId);
+
         if (user.getAdminRoot() != null) {
             if (user.getAdminRoot()){
                 return "catalogAdmin";
@@ -48,6 +49,12 @@ public class CatalogController {
         Users user = usersRepository.findById(userId).get();
         Books book = booksRepository.findById(bookId).get();
 
+        Date dt = new Date();
+        book.setTakenTime(dt.getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTime(dt);
+        c.add(Calendar.DATE, 30);
+        book.setEndTime(c.getTime().getTime());
 
         book.setUsedBy(userId);
         booksRepository.save(book);
@@ -103,5 +110,15 @@ public class CatalogController {
         booksRepository.save(book);
 
         return "redirect:/catalog/" + userId + "/";
+    }
+
+    private Model addModelAttributes(Model model, Long userId){
+        model.addAttribute("toAuthorisation", "http://localhost:8081/authorisation/");
+        model.addAttribute("toProfile", "http://localhost:8082/profile/" + userId + "/");
+        model.addAttribute("toCatalog", "http://localhost:8083/catalog/" + userId + "/");
+        model.addAttribute("toSubscription", "http://localhost:8084/subscription/" + userId + "/");
+        model.addAttribute("toPay", "http://localhost:8085/pay/" + userId + "/");
+        model.addAttribute("toPenalties", "http://localhost:8086/penalties/" + userId + "/");
+        return model;
     }
 }
